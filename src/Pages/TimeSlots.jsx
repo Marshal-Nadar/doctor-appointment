@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 
 import { convertTimeFormat } from '../utils/convertTimeFormat';
 import { convertDateFormat } from '../utils/convertDateFormat';
 import Accordion from '../Components/Accordion';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchDoctorDetails } from '../Redux/Features/doctorSlice';
 
 const TimeSlots = () => {
+  const dispatch = useDispatch();
+  const { loading } = useSelector(state => state.doctors.doctors);
+
+  const { doctors } = useSelector(state => state.doctors.doctors);
+
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [objData, setObjData] = useState(null);
@@ -13,29 +20,21 @@ const TimeSlots = () => {
 
   const [today, setToday] = useState(todayy);
   // const [doctorData, setDoctorData] = useState(null);
-  const [slotData, setSlotData] = useState(null);
+  // const [slotData, setSlotData] = useState(null);
 
   useEffect(() => {
-    const fetchDoctorData = async () => {
-      try {
-        const response = await axios.post(
-          'https://aartas-qaapp-as.azurewebsites.net/aartas_uat/public/api/doctor',
-          { doctor_id: 2 }
-        );
-        console.log('doctor data:', response.data.data[0].timeslots);
-        setSlotData(response.data.data[0].timeslots);
-        // setDoctorData(response.data.data[0]);
-      } catch (error) {
-        console.error('Error fetching doctor data:', error);
-      }
-    };
+    dispatch(fetchDoctorDetails(2));
+  }, [dispatch]);
 
-    fetchDoctorData();
-  }, []);
+  console.log('doctors, loading', doctors.timeslots, loading);
 
-  const uniqueDates = Array.from(new Set(slotData?.map(slot => slot.date)));
-
-  const filteredSlots = slotData?.filter(slot => slot.date === selectedDate);
+  const uniqueDates = Array.from(
+    new Set(doctors.timeslots?.map(slot => slot.date))
+  );
+  // console.log('uniqueDates', uniqueDates);
+  const filteredSlots = doctors.timeslots?.filter(
+    slot => slot.date === selectedDate
+  );
   // console.log('filteredSlots', filteredSlots);
 
   const handleDate = date => {
@@ -49,7 +48,7 @@ const TimeSlots = () => {
     setSelectedTime(time.time_from);
   };
 
-  console.log('todaytodaytoday', selectedTime);
+  // console.log('todaytodaytoday', selectedTime);
 
   return (
     <div className='slot-container'>
@@ -171,3 +170,21 @@ const TimeSlots = () => {
 };
 
 export default TimeSlots;
+
+// useEffect(() => {
+//   const fetchDoctorData = async () => {
+//     try {
+//       const response = await axios.post(
+//         'https://aartas-qaapp-as.azurewebsites.net/aartas_uat/public/api/doctor',
+//         { doctor_id: 2 }
+//       );
+//       // console.log('doctor data:', response.data.data[0].timeslots);
+//       setSlotData(response.data.data[0].timeslots);
+//       // setDoctorData(response.data.data[0]);
+//     } catch (error) {
+//       console.error('Error fetching doctor data:', error);
+//     }
+//   };
+
+//   fetchDoctorData();
+// }, []);
