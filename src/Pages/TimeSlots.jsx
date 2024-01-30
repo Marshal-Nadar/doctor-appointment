@@ -16,31 +16,51 @@ const TimeSlots = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [objData, setObjData] = useState(null);
-  let todayy = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
 
+  let todayy = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
   const [today, setToday] = useState(todayy);
   // const [doctorData, setDoctorData] = useState(null);
   // const [slotData, setSlotData] = useState(null);
 
   useEffect(() => {
     dispatch(fetchDoctorDetails(2));
-  }, [dispatch]);
+    handleDate(todayy);
+  }, [dispatch, todayy]);
 
-  console.log('doctors, loading', doctors.timeslots, loading);
+  // console.log('doctors, loading', doctors.timeslots, loading);
 
-  const uniqueDates = Array.from(
-    new Set(doctors.timeslots?.map(slot => slot.date))
-  );
-  // console.log('uniqueDates', uniqueDates);
+  // const uniqueDates = Array.from(
+  //   new Set((doctors.timeslots || []).map(slot => slot.date))
+  // );
+
+  // const filteredSlots = (doctors.timeslots || []).filter(
+  //   slot => slot.date === selectedDate
+  // );
+
+  // const uniqueDatesToday = Array.from(
+  //   new Set(doctors.timeslots?.map(slot => slot.date))
+  // );
+
+  // console.log('uniqueDatesToday', uniqueDatesToday[0] === todayy);
+
+  // const uniqueDates = Array.from(
+  //   new Set(doctors.timeslots?.map(slot => slot.date))
+  // );
+
+  const uniqueDates = [...new Set(doctors.timeslots?.map(slot => slot.date))];
   const filteredSlots = doctors.timeslots?.filter(
     slot => slot.date === selectedDate
   );
-  // console.log('filteredSlots', filteredSlots);
+
+  console.log('uniqueDates', uniqueDates);
+  console.log('filteredSlots', filteredSlots);
 
   const handleDate = date => {
+    console.log('setSelectedDate', date);
     setSelectedDate(date);
     setSelectedTime(null);
     setObjData(null);
+    setToday(null);
   };
   const handleTime = time => {
     console.log('timetime', time);
@@ -48,13 +68,13 @@ const TimeSlots = () => {
     setSelectedTime(time.time_from);
   };
 
-  // console.log('todaytodaytoday', selectedTime);
+  console.log('todaytodaytoday', todayy);
 
   return (
     <div className='slot-container'>
       <div className='select-header'>Select Date For Appointment</div>
       <Accordion
-        buttonsToShow={uniqueDates.slice(0, 8).map((date, index) => (
+        buttonsToShow={uniqueDates?.slice(0, 8).map((date, index) => (
           <button
             key={index}
             className={`date-button ${today === date ? 'today' : ''} ${
@@ -81,6 +101,7 @@ const TimeSlots = () => {
           </button>
         ))}
       />
+
       <div className='time-slot-header'>
         <div className='select-header'>Select Time Slot</div>
         <div className='slots-available '>
@@ -106,22 +127,28 @@ const TimeSlots = () => {
           {/* <p>{`Obj count for ${selectedDate}: ${filteredSlots.length}`}</p> */}
 
           <div className='select-date-main'>
-            {filteredSlots.map(slot => (
-              <button
-                key={slot.id}
-                // className='btn-setect-notactive'
-                className={
-                  selectedTime === slot.time_from
-                    ? 'btn-setect-active'
-                    : 'btn-setect-notactive'
-                }
-                disabled={slot.booking_status === 1}
-                onClick={() => handleTime(slot)}
-              >
-                {convertTimeFormat(slot.time_from)}
-              </button>
+            {filteredSlots?.map(slot => {
+              // console.log(
+              //   'slot.booking_status === 0',
+              //   slot.booking_status === 0
+              // );
+              return (
+                <button
+                  key={slot.id}
+                  // className='btn-setect-notactive'
+                  className={
+                    selectedTime === slot.time_from
+                      ? 'btn-setect-active'
+                      : 'btn-setect-notactive'
+                  }
+                  disabled={slot.booking_status === 1}
+                  onClick={() => handleTime(slot)}
+                >
+                  {convertTimeFormat(slot.time_from)}
+                </button>
+              );
               // <h1>{convertTimeFormat(slot.time_from)}</h1>
-            ))}
+            })}
           </div>
 
           {/* <ul>

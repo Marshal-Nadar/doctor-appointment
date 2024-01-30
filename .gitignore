@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 
+#Files
+src/Pages/Form.jsx
+src/Pages/Home.jsx
+
 # testing
 /coverage
 

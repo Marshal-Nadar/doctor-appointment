@@ -124,6 +124,10 @@ h2 {
   animation: blinker 1.5s linear infinite;
 }
 
+.today {
+  background-color: #224262;
+  color: #ffff;
+}
 @keyframes blinker {
   50% {
     opacity: 0;
