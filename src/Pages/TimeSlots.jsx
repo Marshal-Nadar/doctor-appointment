@@ -6,6 +6,9 @@ import { convertDateFormat } from '../utils/convertDateFormat';
 import Accordion from '../Components/Accordion';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchDoctorDetails } from '../Redux/Features/doctorSlice';
+import AppointmentCard from './AppointmentCard';
+import Modal from '../Components/Modal';
+import Spinner from '../Components/Spinner';
 
 const TimeSlots = () => {
   const dispatch = useDispatch();
@@ -16,6 +19,8 @@ const TimeSlots = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [objData, setObjData] = useState(null);
+  const [modal, setModal] = useState(false);
+  // const [onClose, setonClose] = useState(false);
 
   let todayy = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
   const [today, setToday] = useState(todayy);
@@ -27,48 +32,33 @@ const TimeSlots = () => {
     handleDate(todayy);
   }, [dispatch, todayy]);
 
-  // console.log('doctors, loading', doctors.timeslots, loading);
-
-  // const uniqueDates = Array.from(
-  //   new Set((doctors.timeslots || []).map(slot => slot.date))
-  // );
-
-  // const filteredSlots = (doctors.timeslots || []).filter(
-  //   slot => slot.date === selectedDate
-  // );
-
-  // const uniqueDatesToday = Array.from(
-  //   new Set(doctors.timeslots?.map(slot => slot.date))
-  // );
-
-  // console.log('uniqueDatesToday', uniqueDatesToday[0] === todayy);
-
-  // const uniqueDates = Array.from(
-  //   new Set(doctors.timeslots?.map(slot => slot.date))
-  // );
-
   const uniqueDates = [...new Set(doctors.timeslots?.map(slot => slot.date))];
   const filteredSlots = doctors.timeslots?.filter(
     slot => slot.date === selectedDate
   );
 
-  console.log('uniqueDates', uniqueDates);
-  console.log('filteredSlots', filteredSlots);
+  // console.log('uniqueDates', uniqueDates);
+  // console.log('filteredSlots', filteredSlots);
 
   const handleDate = date => {
-    console.log('setSelectedDate', date);
+    // console.log('setSelectedDate', date);
     setSelectedDate(date);
     setSelectedTime(null);
     setObjData(null);
     setToday(null);
   };
   const handleTime = time => {
-    console.log('timetime', time);
+    // console.log('timetime', time);
     setObjData(time);
     setSelectedTime(time.time_from);
   };
 
-  console.log('todaytodaytoday', todayy);
+  console.log('modalmodal', modal);
+  console.log('todaytodaytoday', loading);
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <div className='slot-container'>
@@ -160,35 +150,15 @@ const TimeSlots = () => {
           </ul> */}
         </div>
       )}
+      {modal ? <Modal setModal={setModal} /> : ''}
 
       {selectedDate && objData ? (
-        <div className='appointment-container'>
-          <h2>Selected Appointment</h2>
-          <div className='appointment-info'>
-            <div className='info-item'>
-              <span className='info-label'>Date:</span>
-              <span className='info-value'>
-                {convertDateFormat(selectedDate)}
-              </span>
-            </div>
-            <div className='info-item'>
-              <span className='info-label'>Time:</span>
-              <span className='info-value'>
-                {convertTimeFormat(objData.time_from)} -{' '}
-                {convertTimeFormat(objData.time_to)}
-              </span>
-            </div>
-            <div className='info-item'>
-              <span className='info-label'>Doctor ID:</span>
-              <span className='info-value'>{objData.doctor_id}</span>
-            </div>
-            {selectedTime && (
-              <div>
-                <button className='book-now'>Book Now</button>
-              </div>
-            )}
-          </div>
-        </div>
+        <AppointmentCard
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
+          objData={objData}
+          setModal={setModal}
+        />
       ) : (
         ''
       )}
@@ -215,3 +185,23 @@ export default TimeSlots;
 
 //   fetchDoctorData();
 // }, []);
+
+// console.log('doctors, loading', doctors.timeslots, loading);
+
+// const uniqueDates = Array.from(
+//   new Set((doctors.timeslots || []).map(slot => slot.date))
+// );
+
+// const filteredSlots = (doctors.timeslots || []).filter(
+//   slot => slot.date === selectedDate
+// );
+
+// const uniqueDatesToday = Array.from(
+//   new Set(doctors.timeslots?.map(slot => slot.date))
+// );
+
+// console.log('uniqueDatesToday', uniqueDatesToday[0] === todayy);
+
+// const uniqueDates = Array.from(
+//   new Set(doctors.timeslots?.map(slot => slot.date))
+// );
